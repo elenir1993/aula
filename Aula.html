@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aula Mestra - Maratona de Resolução</title>
+<!-- Script aprimorado para garantir a renderização matemática perfeita -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: { 
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: { fontCache: 'global' }
+  };
+</script>
+
+<style>
+  :root { 
+    --bg: #f8fafc; 
+    --panel: #ffffff; 
+    --brand: #0284c7; 
+    --brand-light: #e0f2fe;
+    --brand-dark: #0369a1; 
+    --text: #334155; 
+    --text-light: #64748b;
+    --accent: #f59e0b; 
+    --success: #10b981;
+    --purple: #8b5cf6;
+    --border: #e2e8f0;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  
+  body { background: var(--bg); color: var(--text); line-height: 1.7; display: flex; justify-content: center; }
+
+  .layout {
+    display: flex;
+    max-width: 1250px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background: var(--panel);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  /* SIDEBAR DE NAVEGAÇÃO */
+  .sidebar {
+    width: 290px;
+    background: #0f172a;
+    color: white;
+    padding: 30px 20px;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+
+  .school-logo { text-transform: uppercase; font-size: 0.85rem; color: #94a3b8; letter-spacing: 1px; margin-bottom: 5px; }
+  .course-title { font-size: 1.4rem; font-weight: bold; color: #38bdf8; margin-bottom: 30px; line-height: 1.3; }
+
+  .nav-menu { list-style: none; }
+  .nav-item { margin-bottom: 8px; }
+  .nav-link { display: block; color: #cbd5e1; text-decoration: none; padding: 8px 12px; border-radius: 8px; transition: 0.2s; font-size: 0.95rem; }
+  .nav-link:hover { background: #1e293b; color: #38bdf8; font-weight: bold; }
+
+  /* CONTEÚDO PRINCIPAL */
+  .content {
+    flex: 1;
+    padding: 40px 60px;
+    height: calc(100vh - 40px);
+    overflow-y: auto;
+    scroll-behavior: smooth;
+  }
+
+  h1 { font-size: 2.2rem; color: var(--brand-dark); margin-bottom: 10px; line-height: 1.2;}
+  h2 { font-size: 1.7rem; color: var(--brand); margin-top: 50px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.3rem; color: var(--text); margin-top: 30px; margin-bottom: 15px; border-left: 4px solid var(--brand); padding-left: 10px;}
+  p { margin-bottom: 18px; font-size: 1.05rem; }
+  ul, ol { margin-left: 25px; margin-bottom: 20px; font-size: 1.05rem; }
+  li { margin-bottom: 8px; }
+
+  /* CAIXAS DE DESTAQUE */
+  .callout { padding: 22px; border-radius: 12px; margin: 25px 0; border-left: 6px solid; }
+  .callout-theory { background: var(--brand-light); border-color: var(--brand); color: #075985; }
+  .callout-concept { background: #f3e8ff; border-color: var(--purple); color: #4c1d95; }
+  .callout-example { background: #f8fafc; border: 2px solid #cbd5e1; border-left: 6px solid #6366f1; color: #334155; }
+  
+  .callout h4 { margin-bottom: 10px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+  .callout-example h4 { color: #4338ca; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px; margin-bottom: 15px;}
+  
+  .step-box { background: #ffffff; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 15px; font-size: 1rem; }
+
+  /* ÁREA DOS GRÁFICOS ANIMADOS */
+  .canvas-container {
+    background: #0f172a;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  canvas { background: #1e293b; border-radius: 8px; border: 1px solid #334155; max-width: 100%; }
+  
+  .canvas-controls { margin-top: 15px; display: flex; gap: 10px; }
+  .btn-anim { background: var(--brand); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+  .btn-anim:hover { background: var(--brand-dark); }
+
+  table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 1rem; }
+  th, td { padding: 14px 15px; border: 1px solid var(--border); text-align: left; }
+  th { background: #f1f5f9; color: var(--brand-dark); }
+
+  @media (max-width: 900px) {
+    .layout { flex-direction: column; margin: 0; border-radius: 0; height: 100vh; }
+    .sidebar { width: 100%; height: auto; position: static; padding: 20px; }
+    .content { padding: 30px 20px; height: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  
+  <aside class="sidebar">
+    <div class="school-logo">Escola Interação</div>
+    <div class="course-title">Aula Mestra:<br>Maratona de Modelagem - Prof° Elenir</div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="#intro" class="nav-link">Introdução: Função vs Equação</a></li>
+      <li class="nav-item"><a href="#modulo1" class="nav-link">1. A Função Afim e o 'a'</a></li>
+      <li class="nav-item"><a href="#modulo2" class="nav-link">2. Lendo Gráficos de Retas</a></li>
+      <li class="nav-item"><a href="#modulo3" class="nav-link">3. Ponto de Equilíbrio</a></li>
+      <li class="nav-item"><a href="#modulo4" class="nav-link">4. Função Quadrática & Vértice</a></li>
+      <li class="nav-item"><a href="#modulo5" class="nav-link">5. Extraindo Parábolas</a></li>
+      <li class="nav-item"><a href="#modulo6" class="nav-link">6. As Três Faces da Parábola</a></li>
+      <li class="nav-item"><a href="#modulo7" class="nav-link">7. Domínio e Restrições Físicas</a></li>
+    </ul>
+  </aside>
+
+  <main class="content">
+    
+    <section id="intro">
+      <h1>O Poder da Modelagem Matemática</h1>
+      <p>Bem-vindos à aula preparatória para a <b>Maratona de Resolução da Escola Interação</b>! Nosso objetivo hoje é construir o raciocínio matemático que nos permite traduzir o mundo real para a linguagem algébrica.</p>
+      
+      <div class="callout callout-concept">
+        <h4>A Grande Sacada: Função vs. Equação</h4>
+        <p>Muitos alunos confundem esses dois conceitos. Vamos separá-los agora:</p>
+        <ul>
+          <li><b>A Função é um Filme:</b> Ela descreve um movimento ou uma relação contínua. Exemplo: $h(t) = -5t^2 + 30t$. Ela te conta a altura do projétil em <i>qualquer</i> segundo. A função está "viva".</li>
+          <li><b>A Equação é uma Foto:</b> É quando nós "congelamos" a função para fazer uma pergunta específica. Se eu quero saber quando o projétil atinge exatamente 35 metros, eu troco o $h(t)$ por 35, criando a equação estática: $35 = -5t^2 + 30t$. </li>
+        </ul>
+        <p><b>Resumo da ópera:</b> Sempre que o problema perguntar "quando", "onde" ou "qual o valor para", você deve assumir a função como uma <b>equação</b>, igualando a lei de formação ao valor desejado.</p>
+      </div>
+    </section>
+
+    <!-- MÓDULO 1: FUNÇÃO AFIM -->
+    <section id="modulo1">
+      <h2>1. A Função Afim: Encontrando o coeficiente 'a'</h2>
+      <p>Uma função afim $f(x) = ax + b$ descreve relações de crescimento ou decrescimento constante. O coeficiente $b$ é o valor inicial (bandeirada, taxa fixa). Mas e o coeficiente $a$?</p>
+      
+      <h3>A Taxa de Variação ($\Delta y / \Delta x$)</h3>
+      <p>O 'a' nos diz o quão inclinada é a reta. Ele é a <b>Taxa de Variação</b>. Se você tem dois pontos, basta usar a fórmula da variação:</p>
+      
+      <p style="text-align: center; font-size: 1.5rem; margin: 15px 0;">$$a = \frac{\Delta y}{\Delta x} = \frac{y_2 - y_1}{x_2 - x_1}$$</p>
+
+      <div class="callout callout-example">
+        <h4>📝 Exemplo Prático: A Empresa de Tecnologia</h4>
+        <p><b>Situação:</b> 20 dispositivos custam R\$ 860. 50 dispositivos custam R\$ 1.520. Qual o custo de cada dispositivo adicional?</p>
+        <div class="step-box">
+          <ol>
+            <li>Temos dois pontos: $P_1(20, 860)$ e $P_2(50, 1520)$.</li>
+            <li>Variação do dinheiro ($\Delta y$): $1520 - 860 = 660$ reais.</li>
+            <li>Variação de aparelhos ($\Delta x$): $50 - 20 = 30$ aparelhos.</li>
+            <li>O coeficiente angular será: $a = \frac{660}{30} = 22$.</li>
+            <li><b>Interpretação:</b> A empresa cobra R\$ 22,00 por aparelho extra. Com isso em mãos, achamos a taxa fixa ($b$), substituindo na equação.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 2: LENDO GRÁFICOS DE RETAS -->
+    <section id="modulo2">
+      <h2>2. Como Extrair a Lei de Formação Visualmente</h2>
+      <p>Muitas questões de maratona trazem a informação visual em vez de texto. A regra de ouro é: <b>busque dois pontos exatos no gráfico</b>.</p>
+
+      <div class="canvas-container">
+        <canvas id="linearCanvas" width="600" height="300"></canvas>
+        <div class="canvas-controls">
+          <button class="btn-anim" onclick="startLinearAnimation()">▶ Reproduzir Animação</button>
+        </div>
+      </div>
+
+      <h3>Passo a Passo da Leitura Visual:</h3>
+      <ol>
+        <li><b>Olhe para o eixo Y (Vertical):</b> Onde a reta "corta" a linha vertical é imediatamente o nosso <b>$b$</b>. No gráfico, a corrida começa em R\$ 3,50 (distância zero). Então, $b = 3,50$.</li>
+        <li><b>Ache um cruzamento perfeito:</b> Encontre no gráfico um ponto onde a reta cruza exatamente as marcações. No nosso caso, quando $x = 10$, $y = 24,50$.</li>
+        <li><b>Calcule o 'a' visualmente:</b> A reta andou 10 no eixo $x$ ($\Delta x = 10$), e subiu de 3,50 para 24,50 no eixo $y$ ($\Delta y = 21$). Logo, $a = \frac{21}{10} = 2,10$. A função é $T(x) = 2,10x + 3,50$.</li>
+      </ol>
+    </section>
+
+    <!-- MÓDULO 3: PONTO DE EQUILÍBRIO -->
+    <section id="modulo3">
+      <h2>3. O Ponto de Equilíbrio e Comparação de Retas</h2>
+      <p>Um dos problemas mais comuns da modelagem é decidir <b>qual plano ou empresa é mais barato</b>, ou ainda, saber quando uma fábrica começa a dar lucro. Para isso, precisamos achar o momento exato do "empate": o <b>Ponto de Equilíbrio</b>.</p>
+
+      <div class="canvas-container">
+        <canvas id="eqCanvas" width="600" height="300"></canvas>
+        <div class="canvas-controls">
+          <button class="btn-anim" onclick="startEqAnimation()">▶ Animar Ponto de Equilíbrio</button>
+        </div>
+      </div>
+
+      <div class="callout callout-theory">
+        <h4>A Lógica do Ponto de Equilíbrio</h4>
+        <p>No gráfico, o ponto de equilíbrio é exatamente onde <b>duas retas se cruzam</b>. Algebricamente, encontramos esse ponto igualando as duas funções: <b>$f(x) = g(x)$</b>.</p>
+        <ul>
+          <li><b>Na economia:</b> É quando a Receita empata com o Custo ($R(x) = C(x)$). Antes desse ponto, a empresa tem prejuízo. Depois, tem lucro.</li>
+          <li><b>Na escolha de planos:</b> É a quantidade de uso onde ambas as opções custam a mesma coisa. O segredo está em interpretar o que acontece <i>antes</i> e <i>depois</i> do cruzamento.</li>
+        </ul>
+      </div>
+
+      <div class="callout callout-example">
+        <h4>📝 Exemplo Prático: Comparando Operadoras</h4>
+        <p><b>Situação:</b> A Operadora A cobra um valor fixo de R\$ 30,00 mais R\$ 0,50 por minuto. A Operadora B cobra um valor fixo de R\$ 10,00 mais R\$ 1,00 por minuto. A partir de quantos minutos a Operadora A se torna mais barata?</p>
+        <div class="step-box">
+          <ol>
+            <li><b>Modele as funções:</b><br>
+            Plano A (Azul): $f(x) = 0,50x + 30$<br>
+            Plano B (Roxo): $g(x) = 1,00x + 10$</li>
+            <li><b>Encontre o "Empate" (Ponto de Equilíbrio):</b> Igualamos as funções:<br>
+            $0,50x + 30 = 1,00x + 10$</li>
+            <li>Isolando o 'x':<br>
+            $30 - 10 = 1,00x - 0,50x \implies 20 = 0,50x$<br>
+            $x = \frac{20}{0,50} = 40$ minutos.</li>
+            <li><b>Interpretação de Ouro (Observe no Gráfico):</b> Aos 40 minutos, as duas cobram o mesmo valor (R\$ 50,00). 
+              <br><br><b>E antes dos 40 minutos?</b> A reta roxa (Plano B) está mais embaixo, logo é mais barata para quem usa pouco.
+              <br><b>E depois dos 40 minutos?</b> A reta azul (Plano A) cruza para baixo e domina! Logo, a partir do 41º minuto, a <b>Operadora A passa a ser mais vantajosa</b>.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 4: FUNÇÃO QUADRÁTICA E O VÉRTICE -->
+    <section id="modulo4">
+      <h2>4. A Função Quadrática e a "Mágica" do Vértice</h2>
+      <p>Quando a taxa de variação deixa de ser constante e forma uma curva, entramos nas parábolas: $f(x) = ax^2 + bx + c$.</p>
+
+      <div class="callout callout-concept">
+        <h4>O Porquê do Vértice (Saindo da Decoreba)</h4>
+        <p>Todo aluno decora que a fórmula do X do Vértice é $x_v = \frac{-b}{2a}$. Mas de onde isso vem?</p>
+        <p>A parábola é uma figura <b>perfeitamente simétrica</b>. Isso significa que o Vértice fica exatamente no <b>meio do caminho</b> entre as duas raízes.</p>
+        <p>Se as raízes por Bhaskara são: $\frac{-b + \sqrt{\Delta}}{2a}$ e $\frac{-b - \sqrt{\Delta}}{2a}$.<br>
+        A média entre as duas (somar e dividir por 2) cancela a raiz quadrada (o $\pm \sqrt{\Delta}$ some) e o que sobra é exatamente <b>$\frac{-b}{2a}$</b>!</p>
+        <p>O Vértice não é mágica, ele é literalmente a média aritmética das raízes.</p>
+      </div>
+    </section>
+
+    <!-- MÓDULO 5: GRÁFICOS DE PARÁBOLAS -->
+    <section id="modulo5">
+      <h2>5. Extraindo a Lei de Formação de uma Parábola Visual</h2>
+      
+      <div class="canvas-container">
+        <canvas id="parabolaCanvas" width="600" height="350"></canvas>
+        <div class="canvas-controls">
+          <button class="btn-anim" onclick="startParabolaAnimation()">▶ Reproduzir Lançamento</button>
+        </div>
+      </div>
+
+      <p>Para ler a curva, busque os <b>Pontos Notáveis</b>: o ponto 'c' (corte no Y), as Raízes (0 e 6) e o Vértice no topo (3, 45).</p>
+
+      <div class="callout callout-example">
+        <h4>📝 Transformando o Gráfico na Equação Final</h4>
+        <p>Como pegamos essas informações visuais e descobrimos a função oficial? Vamos usar o gráfico acima!</p>
+        <div class="step-box">
+          <ol>
+            <li><b>Escolha o "Molde":</b> O gráfico mostra as duas raízes claras (0 e 6). Vamos de Forma Fatorada: $f(x) = a(x - r_1)(x - r_2)$.</li>
+            <li><b>Substitua as Raízes:</b> Trocando $x$ por $t$ (tempo): $h(t) = a(t - 0)(t - 6) \implies h(t) = a \cdot t(t - 6)$.</li>
+            <li><b>Use o Vértice para achar o 'a':</b> O gráfico diz que no tempo $t=3$, a altura é $45$. Substitua para isolar o 'a': <br>
+            $45 = a \cdot 3(3 - 6) \implies 45 = a \cdot 3(-3) \implies 45 = -9a \implies a = -5$.</li>
+            <li><b>A "Carinha" Final:</b> Sabemos que $a = -5$. A função é $h(t) = -5 \cdot t(t - 6)$. Fazendo a distributiva, chegamos à forma padrão: <b>$h(t) = -5t^2 + 30t$</b>.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 6: AS TRÊS FACES DA PARÁBOLA -->
+    <section id="modulo6">
+      <h2>6. As Três Faces da Função Quadrática</h2>
+      <p>O segredo da maratona é escolher o "molde" certo com base no que o texto te deu.</p>
+
+      <h3>Face 1: A Forma Padrão $\rightarrow f(x) = ax^2 + bx + c$</h3>
+      <p>Use quando tiver o ponto inicial (corte no Y) e informações sobre o vértice.</p>
+      <div class="callout callout-example">
+        <h4>📝 Exemplo (Forma Padrão)</h4>
+        <p><b>Situação:</b> A dívida $D(t) = at^2 + bt + c$. No tempo inicial $t=0$, a dívida é R\$ 20 mil. O Vértice máximo ocorre em $t=5$ com R\$ 25 mil.</p>
+        <div class="step-box">
+          <ol>
+            <li>Se $t=0$ dá 20, então $c = 20$. Função: $D(t) = at^2 + bt + 20$.</li>
+            <li>O tempo máximo é o $x_v$: $5 = \frac{-b}{2a} \implies b = -10a$.</li>
+            <li>Sabemos que $D(5) = 25$: $25 = a(5)^2 + b(5) + 20 \implies 25a + 5b = 5$.</li>
+            <li>Substituindo 'b': $25a + 5(-10a) = 5 \implies -25a = 5 \implies a = -0,2$.</li>
+            <li>Se $a = -0,2$, então $b = 2$. Função: $D(t) = -0,2t^2 + 2t + 20$.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h3>Face 2: A Forma Fatorada $\rightarrow f(x) = a(x - r_1)(x - r_2)$</h3>
+      <p>Use obrigatoriamente quando o problema te der as <b>raízes</b>.</p>
+      <div class="callout callout-example">
+        <h4>📝 Exemplo (Forma Fatorada)</h4>
+        <p><b>Situação:</b> O lucro é zero se o preço for R\$ 10 ou R\$ 40. O lucro máximo é R\$ 225. Ache a função.</p>
+        <div class="step-box">
+          <ol>
+            <li>Substituindo as raízes: $L(x) = a(x - 10)(x - 40)$.</li>
+            <li>Onde é o máximo? Na média das raízes: $x_v = \frac{10 + 40}{2} = 25$. </li>
+            <li>Se cobrar 25, lucra 225: $225 = a(25 - 10)(25 - 40) \implies 225 = a(15)(-15) \implies -225a = 225 \implies a = -1$.</li>
+            <li>Função final: $L(x) = -1(x - 10)(x - 40)$.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h3>Face 3: A Forma Canônica (De Vértice) $\rightarrow f(x) = a(x - h)^2 + k$</h3>
+      <p>Use quando a primeira informação que pular for o <b>Ponto Máximo ou Mínimo</b> $V(h, k)$.</p>
+      <div class="callout callout-example">
+        <h4>📝 Exemplo (Forma Canônica)</h4>
+        <p><b>Situação:</b> Transforme $f(x) = -2x^2 + 8x + 3$ para a forma canônica.</p>
+        <div class="step-box">
+          <ol>
+            <li>Calculamos $x_v = \frac{-8}{2(-2)} = 2$. Esse é o $h$.</li>
+            <li>Calculamos a altura $y_v = f(2) = -2(2)^2 + 8(2) + 3 = 11$. Esse é o $k$.</li>
+            <li>A forma exige o $a$ (já sabemos que é -2).</li>
+            <li>Substituindo: $f(x) = -2(x - 2)^2 + 11$. Olhando apenas para isso, já sabemos que o máximo é 11 e ocorre em x=2!</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- MÓDULO 7: DOMÍNIO -->
+    <section id="modulo7">
+      <h2>7. Domínio, Contradomínio e Restrições do Mundo Real</h2>
+      <p>O mundo real impõe restrições severas sobre as respostas da álgebra.</p>
+      
+      <ul>
+        <li><b>Domínio Teórico vs. Prático:</b> Se a função calcula número de pessoas, $x = 3,5$ é impossível no mundo real. O Domínio deve ser de números Naturais.</li>
+        <li><b>Áreas e Geometria:</b> Na otimização de um canteiro com 40m de cerca ($A(x) = -2x^2 + 40x$), as raízes são $0$ e $20$. Fisicamente, o lado não pode ser negativo e nem usar mais cerca do que existe. Logo, o <b>Domínio é $0 < x < 20$</b>.</li>
+        <li><b>Cortes Financeiros:</b> Se o bem-estar atinge o máximo na volta nº 8 de um brinquedo, mas a pessoa só tem orçamento para pagar até a volta nº 5, o limite é financeiro. Assumimos a função Custo como Inequação ($Custo \le Orçamento$). A resposta será o máximo <b>dentro da restrição</b>.</li>
+      </ul>
+      
+      <p style="margin-top: 50px; text-align: center; font-size: 1.25rem; font-weight: bold; color: var(--brand);">
+        Vocês têm todas as chaves de modelagem em mãos. Estão prontos para a Maratona! 🚀
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<!-- SCRIPTS DOS GRÁFICOS ANIMADOS -->
+<script>
+  // UTILS PARA OS GRÁFICOS
+  function drawGrid(ctx, w, h, stepX, stepY) {
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1;
+    for(let x=0; x<=w; x+=stepX) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+    for(let y=0; y<=h; y+=stepY) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+  }
+
+  // --- ANIMAÇÃO GRÁFICO LINEAR (MÓDULO 2) ---
+  const linCanvas = document.getElementById('linearCanvas');
+  const lctx = linCanvas.getContext('2d');
+  let linAnimId;
+
+  function mapXLin(val) { return 40 + (val / 12) * (linCanvas.width - 60); }
+  function mapYLin(val) { return linCanvas.height - 30 - (val / 30) * (linCanvas.height - 50); }
+
+  function drawLinearBase() {
+    lctx.clearRect(0, 0, linCanvas.width, linCanvas.height);
+    drawGrid(lctx, linCanvas.width, linCanvas.height, (linCanvas.width-60)/12, (linCanvas.height-50)/6);
+    
+    lctx.strokeStyle = '#94a3b8'; lctx.lineWidth = 2;
+    lctx.beginPath(); lctx.moveTo(40, 0); lctx.lineTo(40, linCanvas.height-30); lctx.stroke(); 
+    lctx.beginPath(); lctx.moveTo(40, linCanvas.height-30); lctx.lineTo(linCanvas.width, linCanvas.height-30); lctx.stroke(); 
+    
+    lctx.fillStyle = '#cbd5e1'; lctx.font = '12px Arial';
+    lctx.fillText("0", 25, linCanvas.height - 15);
+    lctx.fillText("Distância (km)", linCanvas.width - 90, linCanvas.height - 10);
+    lctx.fillText("Preço (R$)", 10, 20);
+    
+    lctx.fillStyle = '#38bdf8';
+    lctx.fillText("3.50", 10, mapYLin(3.5) + 4);
+    lctx.fillText("24.50", 5, mapYLin(24.5) + 4);
+    lctx.fillText("10", mapXLin(10) - 5, linCanvas.height - 15);
+  }
+
+  function startLinearAnimation() {
+    cancelAnimationFrame(linAnimId);
+    let currentX = 0;
+    
+    function animate() {
+      drawLinearBase();
+      
+      lctx.beginPath();
+      lctx.strokeStyle = '#38bdf8';
+      lctx.lineWidth = 4;
+      lctx.moveTo(mapXLin(0), mapYLin(3.5));
+      lctx.lineTo(mapXLin(currentX), mapYLin(2.10 * currentX + 3.5));
+      lctx.stroke();
+      
+      lctx.fillStyle = '#f59e0b';
+      lctx.beginPath(); lctx.arc(mapXLin(0), mapYLin(3.5), 6, 0, Math.PI*2); lctx.fill();
+
+      currentX += 0.2;
+      
+      if (currentX <= 10) {
+        linAnimId = requestAnimationFrame(animate);
+      } else {
+        lctx.fillStyle = '#f59e0b';
+        lctx.beginPath(); lctx.arc(mapXLin(10), mapYLin(24.5), 6, 0, Math.PI*2); lctx.fill();
+        
+        lctx.beginPath();
+        lctx.strokeStyle = '#f59e0b';
+        lctx.lineWidth = 2;
+        lctx.setLineDash([5, 5]);
+        lctx.moveTo(mapXLin(0), mapYLin(3.5));
+        lctx.lineTo(mapXLin(10), mapYLin(3.5)); 
+        lctx.lineTo(mapXLin(10), mapYLin(24.5)); 
+        lctx.stroke();
+        lctx.setLineDash([]);
+        
+        lctx.fillStyle = '#fef3c7'; lctx.font = 'bold 14px Arial';
+        lctx.fillText("Δx = 10", mapXLin(5) - 20, mapYLin(3.5) + 20);
+        lctx.fillText("Δy = 21", mapXLin(10) + 10, mapYLin(14));
+      }
+    }
+    animate();
+  }
+
+  // --- ANIMAÇÃO GRÁFICO PONTO DE EQUILÍBRIO (MÓDULO 3) ---
+  const eqCanvas = document.getElementById('eqCanvas');
+  const ectx = eqCanvas.getContext('2d');
+  let eqAnimId;
+
+  function mapXEq(val) { return 50 + (val / 60) * (eqCanvas.width - 70); }
+  function mapYEq(val) { return eqCanvas.height - 40 - (val / 70) * (eqCanvas.height - 60); }
+
+  function drawEqBase() {
+    ectx.clearRect(0, 0, eqCanvas.width, eqCanvas.height);
+    drawGrid(ectx, eqCanvas.width, eqCanvas.height, (eqCanvas.width-70)/6, (eqCanvas.height-60)/7);
+    
+    ectx.strokeStyle = '#94a3b8'; ectx.lineWidth = 2;
+    ectx.beginPath(); ectx.moveTo(50, 0); ectx.lineTo(50, eqCanvas.height-40); ectx.stroke(); 
+    ectx.beginPath(); ectx.moveTo(50, eqCanvas.height-40); ectx.lineTo(eqCanvas.width, eqCanvas.height-40); ectx.stroke(); 
+    
+    ectx.fillStyle = '#cbd5e1'; ectx.font = '12px Arial';
+    ectx.fillText("0", 35, eqCanvas.height - 25);
+    ectx.fillText("Minutos (x)", eqCanvas.width - 80, eqCanvas.height - 10);
+    ectx.fillText("Custo (R$)", 10, 20);
+    
+    ectx.fillStyle = '#94a3b8';
+    ectx.fillText("40", mapXEq(40) - 5, eqCanvas.height - 25);
+    ectx.fillText("50", 25, mapYEq(50) + 4);
+  }
+
+  function startEqAnimation() {
+    cancelAnimationFrame(eqAnimId);
+    let currentX = 0;
+    
+    function animate() {
+      drawEqBase();
+      
+      // Linha Plano B (1.0x + 10) - Roxa
+      ectx.beginPath();
+      ectx.strokeStyle = '#8b5cf6';
+      ectx.lineWidth = 3;
+      ectx.moveTo(mapXEq(0), mapYEq(10));
+      ectx.lineTo(mapXEq(currentX), mapYEq(1.0 * currentX + 10));
+      ectx.stroke();
+      
+      // Linha Plano A (0.5x + 30) - Azul
+      ectx.beginPath();
+      ectx.strokeStyle = '#38bdf8';
+      ectx.lineWidth = 3;
+      ectx.moveTo(mapXEq(0), mapYEq(30));
+      ectx.lineTo(mapXEq(currentX), mapYEq(0.5 * currentX + 30));
+      ectx.stroke();
+
+      currentX += 1; 
+      
+      if (currentX <= 60) {
+        eqAnimId = requestAnimationFrame(animate);
+      } else {
+        // Intersecção
+        ectx.fillStyle = '#10b981';
+        ectx.beginPath(); ectx.arc(mapXEq(40), mapYEq(50), 7, 0, Math.PI*2); ectx.fill();
+        
+        ectx.beginPath();
+        ectx.strokeStyle = '#10b981';
+        ectx.lineWidth = 2;
+        ectx.setLineDash([5, 5]);
+        ectx.moveTo(mapXEq(0), mapYEq(50));
+        ectx.lineTo(mapXEq(40), mapYEq(50)); 
+        ectx.lineTo(mapXEq(40), mapYEq(0)); 
+        ectx.stroke();
+        ectx.setLineDash([]);
+        
+        ectx.fillStyle = '#d1fae5'; ectx.font = 'bold 14px Arial';
+        ectx.fillText("Ponto de Equilíbrio", mapXEq(40) - 60, mapYEq(50) - 15);
+        
+        // Legenda
+        ectx.fillStyle = '#38bdf8'; ectx.fillText("Plano A", mapXEq(55), mapYEq(0.5*55+30) - 10);
+        ectx.fillStyle = '#8b5cf6'; ectx.fillText("Plano B", mapXEq(55), mapYEq(1.0*55+10) + 20);
+      }
+    }
+    animate();
+  }
+
+  // --- ANIMAÇÃO GRÁFICO PARÁBOLA (MÓDULO 5) ---
+  const parCanvas = document.getElementById('parabolaCanvas');
+  const pctx = parCanvas.getContext('2d');
+  let parAnimId;
+
+  function mapXPar(val) { return 40 + (val / 7) * (parCanvas.width - 60); }
+  function mapYPar(val) { return parCanvas.height - 30 - (val / 50) * (parCanvas.height - 50); }
+
+  function drawParabolaBase() {
+    pctx.clearRect(0, 0, parCanvas.width, parCanvas.height);
+    drawGrid(pctx, parCanvas.width, parCanvas.height, (parCanvas.width-60)/7, (parCanvas.height-50)/5);
+    
+    pctx.strokeStyle = '#94a3b8'; pctx.lineWidth = 2;
+    pctx.beginPath(); pctx.moveTo(40, 0); pctx.lineTo(40, parCanvas.height-30); pctx.stroke(); 
+    pctx.beginPath(); pctx.moveTo(40, parCanvas.height-30); pctx.lineTo(parCanvas.width, parCanvas.height-30); pctx.stroke(); 
+    
+    pctx.fillStyle = '#cbd5e1'; pctx.font = '12px Arial';
+    pctx.fillText("0", 25, parCanvas.height - 15);
+    pctx.fillText("Tempo (s)", parCanvas.width - 70, parCanvas.height - 10);
+    pctx.fillText("Altura (m)", 10, 20);
+  }
+
+  function startParabolaAnimation() {
+    cancelAnimationFrame(parAnimId);
+    let t = 0;
+    
+    function animate() {
+      drawParabolaBase();
+      
+      pctx.beginPath();
+      pctx.strokeStyle = 'rgba(139, 92, 246, 0.5)';
+      pctx.lineWidth = 4;
+      pctx.setLineDash([8, 8]);
+      for(let i=0; i<=t; i+=0.1) {
+        let h = -5*i*i + 30*i;
+        if(i===0) pctx.moveTo(mapXPar(i), mapYPar(h));
+        else pctx.lineTo(mapXPar(i), mapYPar(h));
+      }
+      pctx.stroke();
+      pctx.setLineDash([]);
+      
+      let currentH = -5*t*t + 30*t;
+      pctx.fillStyle = '#f59e0b';
+      pctx.beginPath(); pctx.arc(mapXPar(t), mapYPar(currentH), 8, 0, Math.PI*2); pctx.fill();
+      
+      if (t >= 3) {
+        pctx.fillStyle = '#10b981';
+        pctx.beginPath(); pctx.arc(mapXPar(3), mapYPar(45), 6, 0, Math.PI*2); pctx.fill();
+        pctx.fillStyle = '#d1fae5'; pctx.font = 'bold 14px Arial';
+        pctx.fillText("Vértice (3, 45)", mapXPar(3) - 40, mapYPar(45) - 15);
+      }
+      
+      t += 0.05;
+      
+      if (t <= 6) {
+        parAnimId = requestAnimationFrame(animate);
+      } else {
+        pctx.fillStyle = '#ef4444';
+        pctx.beginPath(); pctx.arc(mapXPar(0), mapYPar(0), 8, 0, Math.PI*2); pctx.fill();
+        pctx.beginPath(); pctx.arc(mapXPar(6), mapYPar(0), 8, 0, Math.PI*2); pctx.fill();
+        pctx.fillStyle = '#fee2e2'; pctx.font = 'bold 14px Arial';
+        pctx.fillText("Raiz 1 (0s)", mapXPar(0) + 10, mapYPar(0) - 10);
+        pctx.fillText("Raiz 2 (6s)", mapXPar(6) - 30, mapYPar(0) - 15);
+      }
+    }
+    animate();
+  }
+
+  // Inicializa com as bases desenhadas
+  drawLinearBase();
+  drawEqBase();
+  drawParabolaBase();
+
+</script>
+</body>
+</html>
